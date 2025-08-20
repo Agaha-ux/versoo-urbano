@@ -1,0 +1,873 @@
+### Site completo em HTML para Verso Urbanos
+
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Verso Urbanos — Moda que te encontra</title>
+  <meta name="description" content="Verso Urbanos: moda urbana com experiência completa de compra. Busque, favorite, compare, calcule frete e receba recomendações inteligentes." />
+  <style>
+    :root{
+      --bg:#0f1115; --card:#171923; --muted:#8a8fa3; --text:#f2f4f8; --brand:#8f74ff; --brand-2:#24d1b5; --line:#25293a;
+      --danger:#ff6b6b; --ok:#20c997; --warn:#ffd166;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+      --radius:14px; --radius-sm:10px;
+      --pad:18px; --pad-sm:12px;
+      --trans:.2s ease;
+    }
+    * { box-sizing:border-box }
+    html,body{ height:100% }
+    body{
+      margin:0; background:linear-gradient(180deg,#0c0e12 0%, #0f1115 40%, #10131a 100%);
+      color:var(--text); font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial;
+      overflow-x:hidden;
+    }
+    a{ color:inherit; text-decoration:none }
+    img{ max-width:100%; display:block }
+    .container{ width:min(1200px, 92%); margin-inline:auto }
+    header{
+      position:sticky; top:0; z-index:50; backdrop-filter:saturate(1.2) blur(12px);
+      background:rgba(15,17,21,.75); border-bottom:1px solid var(--line);
+    }
+    .topbar{
+      display:flex; align-items:center; gap:14px; padding:10px 0;
+    }
+    .brand{ display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.5px }
+    .brand .logo{
+      width:38px; height:38px; border-radius:10px;
+      background:conic-gradient(from 220deg, var(--brand), var(--brand-2) 40%, #4ac7ff 75%, var(--brand) 100%);
+      box-shadow:0 0 0 3px rgba(143,116,255,.15), inset 0 0 30px rgba(0,0,0,.35);
+    }
+    .brand span{ font-size:1.1rem; text-transform:uppercase }
+    .search{
+      flex:1; position:relative; display:flex; align-items:center;
+      background:var(--card); border:1px solid var(--line); border-radius:12px; padding:6px 10px;
+    }
+    .search input{
+      flex:1; background:transparent; border:0; outline:0; color:var(--text); font-size:15px; padding:8px;
+    }
+    .icon{ width:22px; height:22px; opacity:.8 }
+    .nav-actions{ display:flex; align-items:center; gap:10px; margin-left:auto }
+    .icon-btn{
+      display:inline-flex; align-items:center; gap:8px; padding:8px 10px; border-radius:10px; border:1px solid var(--line);
+      background:var(--card); cursor:pointer; transition:transform var(--trans), background var(--trans), border-color var(--trans);
+    }
+    .icon-btn:hover{ transform:translateY(-1px); border-color:#2e3350 }
+    .pill{ background:#1f2232; padding:2px 7px; border-radius:9px; font-size:12px; color:#c7cbdf }
+
+    /* Hero */
+    .hero{
+      position:relative; overflow:hidden; margin:16px 0 6px; border-radius:var(--radius); border:1px solid var(--line);
+      background:
+        radial-gradient(1200px 400px at 10% -10%, rgba(143,116,255,.2), transparent 50%),
+        radial-gradient(800px 300px at 90% -20%, rgba(36,209,181,.15), transparent 60%),
+        linear-gradient(180deg,#111522, #0f121a 70%);
+      box-shadow: var(--shadow);
+    }
+    .hero-inner{ display:grid; grid-template-columns:1.1fr .9fr; gap:10px; padding:24px }
+    .hero h1{ margin:0 0 8px; font-size:clamp(24px, 3.8vw, 40px) }
+    .hero p{ margin:0; color:var(--muted) }
+    .hero-cta{ display:flex; gap:10px; margin-top:16px }
+    .btn{
+      display:inline-flex; align-items:center; gap:10px; border:1px solid var(--line);
+      background:linear-gradient(180deg, #1a1d2b, #171a26); color:#fff; padding:10px 14px; border-radius:12px;
+      cursor:pointer; transition:transform var(--trans), box-shadow var(--trans), border-color var(--trans);
+    }
+    .btn:hover{ transform:translateY(-2px); border-color:#2e3350; box-shadow:0 10px 20px rgba(0,0,0,.25) }
+    .btn.primary{ background:linear-gradient(180deg, #8f74ff, #6e58d3); border-color:#6e58d3 }
+    .btn.ghost{ background:transparent }
+    .hero-badges{ display:flex; flex-wrap:wrap; gap:8px; margin-top:12px }
+    .badge{ font-size:12px; padding:6px 10px; border:1px dashed #2d3350; color:#cbd1ea; border-radius:999px; background:#151829 }
+
+    /* Filters */
+    .filters{
+      display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px; border:1px solid var(--line);
+      background:var(--card); border-radius:12px; margin:18px 0;
+    }
+    .chips{ display:flex; gap:8px; flex-wrap:wrap }
+    .chip{
+      padding:8px 12px; border:1px solid var(--line); border-radius:999px; background:#141722; color:#cdd2e9; cursor:pointer;
+      transition:all var(--trans)
+    }
+    .chip.active{ background:linear-gradient(180deg, #21253a, #191d2b); border-color:#343a61; color:#fff }
+    .sort{ display:flex; gap:8px; align-items:center }
+    select{
+      background:#121522; border:1px solid var(--line); color:#dfe3fb; padding:8px 12px; border-radius:10px; outline:0;
+    }
+
+    /* Grid */
+    .grid{
+      display:grid; grid-template-columns:repeat(4, 1fr); gap:16px;
+    }
+    @media (max-width: 980px){ .hero-inner{ grid-template-columns:1fr } .grid{ grid-template-columns:repeat(2, 1fr)} }
+    @media (max-width: 620px){ .grid{ grid-template-columns:1fr} }
+    .card{
+      position:relative; overflow:hidden; border-radius:16px; border:1px solid var(--line);
+      background:linear-gradient(180deg, #161927, #121522);
+      transition:transform var(--trans), border-color var(--trans), box-shadow var(--trans);
+    }
+    .card:hover{ transform:translateY(-3px); border-color:#2e3350; box-shadow: var(--shadow) }
+    .card-media{
+      aspect-ratio: 4/3; background:#0d0f16; overflow:hidden;
+      display:grid; place-items:center;
+    }
+    .card-media img{ width:100%; height:100%; object-fit:cover; transition:transform .5s ease }
+    .card:hover .card-media img{ transform:scale(1.06) rotate(.2deg) }
+    .card-body{ padding:12px }
+    .title{ font-weight:700; margin:0 0 4px; font-size:15px }
+    .muted{ color:var(--muted) }
+    .price{ font-weight:800; letter-spacing:.3px }
+    .row{ display:flex; align-items:center; justify-content:space-between; gap:10px }
+    .fav{
+      position:absolute; top:10px; right:10px; background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.08);
+      width:38px; height:38px; display:grid; place-items:center; border-radius:12px; cursor:pointer; transition:transform var(--trans)
+    }
+    .fav:hover{ transform:scale(1.05) }
+    .heart{ width:22px; height:22px; fill:none; stroke:#fff; stroke-width:1.6; opacity:.9 }
+    .heart.filled{ fill:#ff6b6b; stroke:#ff6b6b }
+
+    /* Drawers & modals */
+    .drawer{
+      position:fixed; top:0; right:0; width:min(420px, 92%); height:100dvh; background:linear-gradient(180deg, #161927, #10131b);
+      border-left:1px solid var(--line); transform:translateX(105%); transition:transform .3s ease; z-index:100; display:flex; flex-direction:column;
+      box-shadow: -30px 0 60px rgba(0,0,0,.3);
+    }
+    .drawer.open{ transform:none }
+    .drawer header{ position:sticky; top:0; background:transparent; border:0 }
+    .drawer .content{ padding:14px; overflow:auto; flex:1 }
+    .close{ cursor:pointer; padding:8px 12px; border:1px solid var(--line); border-radius:10px; background:#121625 }
+    .line{ height:1px; background:var(--line); margin:10px 0 }
+
+    .modal{ position:fixed; inset:0; display:none; place-items:center; background:rgba(0,0,0,.55); z-index:90; padding:20px }
+    .modal.open{ display:grid }
+    .modal-card{
+      width:min(980px, 100%); border:1px solid var(--line); border-radius:16px; background:linear-gradient(180deg,#161927, #10131b);
+      box-shadow: var(--shadow); display:grid; grid-template-columns:1.1fr 1fr; overflow:hidden;
+    }
+    @media (max-width:980px){ .modal-card{ grid-template-columns:1fr } }
+    .gallery{ background:#0f121a; padding:12px; display:grid; grid-template-rows:auto 90px; gap:10px }
+    .gallery-main{ aspect-ratio: 4/3; border:1px solid var(--line); border-radius:12px; overflow:hidden; display:grid; place-items:center }
+    .gallery-thumbs{ display:grid; grid-template-columns:repeat(6, 1fr); gap:8px }
+    .thumb{ border:1px solid var(--line); border-radius:10px; overflow:hidden; cursor:pointer; opacity:.8 }
+    .thumb.active{ outline:2px solid #38406e; opacity:1 }
+    .pdp{ padding:14px 16px 18px }
+    .sizes{ display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 }
+    .size{ padding:8px 12px; background:#14182a; border:1px solid var(--line); border-radius:10px; cursor:pointer }
+    .size.active{ background:#1c2140; border-color:#38406e }
+    .qty{ display:flex; align-items:center; gap:8px; margin:8px 0 }
+    .qty button{ width:32px; height:32px; border-radius:10px; border:1px solid var(--line); background:#121625; color:#fff }
+    .ship{ margin-top:10px; border:1px dashed #2d3350; border-radius:12px; padding:10px }
+    .ship input{ width:160px; background:#111423; border:1px solid var(--line); border-radius:10px; color:#fff; padding:8px 10px; outline:0 }
+    .ship .tag{ font-size:12px; padding:4px 8px; border:1px solid var(--line); border-radius:999px; background:#151829; color:#cbd1ea }
+    .recommendations{ margin-top:12px }
+
+    /* Toast */
+    .toast{ position:fixed; left:50%; bottom:20px; transform:translateX(-50%) translateY(120%); transition:transform .3s ease;
+      background:#121625; border:1px solid var(--line); color:#e9ecff; padding:12px 16px; border-radius:12px; z-index:110; box-shadow: var(--shadow);
+    }
+    .toast.show{ transform:translateX(-50%) }
+    .skeleton{ background:linear-gradient(90deg, #121525, #181b2d 45%, #121525 60%); background-size:200% 100%; animation:shimmer 1.3s infinite }
+    @keyframes shimmer{ 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    .fade-up{ animation:fadeUp .5s ease both }
+    @keyframes fadeUp{ from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none} }
+    .mini{ font-size:12px; color:#9aa1bd }
+    footer{ margin:30px 0 80px; border-top:1px solid var(--line); padding-top:18px; color:#a6acc7 }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <span>Verso Urbanos</span>
+      </div>
+      <div class="search" role="search">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zM5 9.5C5 7.01 7.01 5 9.5 5S14 7.01 14 9.5 11.99 14 9.5 14 5 11.99 5 9.5Z"/></svg>
+        <input id="searchInput" placeholder="Buscar por produto, tag ou estilo..." autocomplete="off" />
+        <span class="pill" id="resultCount">0</span>
+      </div>
+      <div class="nav-actions">
+        <button class="icon-btn" id="openFavs" title="Favoritos">
+          <svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 3.99 4 6.5 4c1.74 0 3.41.81 4.5 2.09A6 6 0 0 1 20 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          <span>Favoritos</span><span class="pill" id="favCount">0</span>
+        </button>
+        <button class="icon-btn" id="openCart" title="Carrinho">
+          <svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 
+          0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2zM7.16 14l.84-2h8.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 
+          0 0 21 2H5.21l-.94-2H0v2h2l3.6 7.59-1.35 2.44C3.52 13.37 4.48 15 6 15h12v-2H7.16z"/></svg>
+          <span>Carrinho</span><span class="pill" id="cartCount">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero fade-up">
+      <div class="hero-inner">
+        <div>
+          <h1>Vista sua essência. Tecnologia que recomenda o que você vai amar.</h1>
+          <p>Explore lançamentos, salve seus favoritos, calcule frete por CEP e receba sugestões baseadas no seu gosto.</p>
+          <div class="hero-cta">
+            <button class="btn primary" id="ctaNovidades">Ver novidades</button>
+            <button class="btn ghost" id="ctaOfertas">Ofertas</button>
+          </div>
+          <div class="hero-badges">
+            <span class="badge">Frete estimado por CEP</span>
+            <span class="badge">Recomendações inteligentes</span>
+            <span class="badge">Favoritos salvos</span>
+            <span class="badge">Carrinho persistente</span>
+          </div>
+        </div>
+        <div>
+          <div class="gallery-main" style="border-radius:14px;">
+            <img alt="Coleção Verso Urbanos" src="https://tse3.mm.bing.net/th/id/OIP.GYFhUzxTZr3PUjDkW2sUkAHaEK?pid=Api&P=0&h=180" loading="lazy"/>
+          </div>
+          <div class="hero-badges" style="margin:10px 0 0">
+            <span class="badge">Street</span>
+            <span class="badge">Casual</span>
+            <span class="badge">Unissex</span>
+            <span class="badge">Edição limitada</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="filters fade-up" aria-label="Filtros">
+      <div class="chips" id="chips">
+        <button class="chip active" data-filter="all">Todos</button>
+        <button class="chip" data-filter="masculino">Masculino</button>
+        <button class="chip" data-filter="feminino">Feminino</button>
+        <button class="chip" data-filter="unissex">Unissex</button>
+        <button class="chip" data-filter="camiseta">Camisetas</button>
+        <button class="chip" data-filter="jaqueta">Jaquetas</button>
+        <button class="chip" data-filter="promo">Promoções</button>
+      </div>
+      <div class="sort">
+        <label class="mini">Ordenar:</label>
+        <select id="sortSelect">
+          <option value="relevance">Relevância</option>
+          <option value="price-asc">Preço: menor ao maior</option>
+          <option value="price-desc">Preço: maior ao menor</option>
+          <option value="newest">Novidades</option>
+        </select>
+      </div>
+    </section>
+
+    <section id="grid" class="grid fade-up" aria-live="polite" aria-busy="false"></section>
+
+    <footer>
+      <div class="row">
+        <div>
+          <div class="brand" style="margin:6px 0">
+            <div class="logo" aria-hidden="true"></div>
+            <span>Verso Urbanos</span>
+          </div>
+          <p class="mini">Sua forma, seu ritmo. Compre com inteligência: favoritos, recomendações e frete na hora.</p>
+        </div>
+        <form id="newsletter" class="row" onsubmit="event.preventDefault(); toast('Obrigado por se inscrever!');">
+          <input style="background:#101423;border:1px solid var(--line);border-radius:10px;color:#fff;padding:10px" placeholder="Seu e-mail" />
+          <button class="btn">Assinar novidades</button>
+        </form>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Drawer: Carrinho -->
+  <aside id="cartDrawer" class="drawer" aria-hidden="true">
+    <header class="container topbar" style="padding:10px">
+      <h3 style="margin:0">Seu carrinho</h3>
+      <button class="close" onclick="toggleCart(false)">Fechar</button>
+    </header>
+    <div class="content" id="cartContent">
+      <!-- itens -->
+    </div>
+    <div style="padding:14px;border-top:1px solid var(--line)">
+      <div class="row" style="margin-bottom:8px">
+        <span class="mini">Subtotal</span>
+        <strong id="subtotal">R$ 0,00</strong>
+      </div>
+      <div class="row" style="margin-bottom:8px">
+        <span class="mini">Frete</span>
+        <strong id="shipCost">Calcule no produto</strong>
+      </div>
+      <div class="row" style="margin-bottom:12px">
+        <span class="mini">Total</span>
+        <strong id="total">R$ 0,00</strong>
+      </div>
+      <button class="btn primary" style="width:100%" onclick="toast('Checkout em breve. Integração com gateway de pagamento pronta para plugar.')">Finalizar compra</button>
+    </div>
+  </aside>
+
+  <!-- Drawer: Favoritos -->
+  <aside id="favDrawer" class="drawer" aria-hidden="true">
+    <header class="container topbar" style="padding:10px">
+      <h3 style="margin:0">Favoritos</h3>
+      <button class="close" onclick="toggleFavs(false)">Fechar</button>
+    </header>
+    <div class="content" id="favContent"></div>
+  </aside>
+
+  <!-- Modal: Produto -->
+  <div id="pdpModal" class="modal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="gallery">
+        <div class="gallery-main" id="galleryMain"></div>
+        <div class="gallery-thumbs" id="galleryThumbs"></div>
+      </div>
+      <div class="pdp">
+        <div class="row">
+          <div>
+            <h2 id="pdpTitle" style="margin:0 0 4px"></h2>
+            <div class="mini" id="pdpTags"></div>
+          </div>
+          <button class="close" onclick="togglePDP(false)">Fechar</button>
+        </div>
+        <div class="row" style="margin:10px 0">
+          <div class="price" id="pdpPrice">R$ 0,00</div>
+          <button id="pdpFav" class="icon-btn" title="Favoritar">
+            <svg class="icon" viewBox="0 0 24 24"><path id="pdpFavPath" fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 
+            12.28 2 8.5 2 6 3.99 4 6.5 4c1.74 0 3.41.81 4.5 2.09A6 6 0 0 1 20 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            <span id="pdpFavText">Favoritar</span>
+          </button>
+        </div>
+
+        <div>
+          <div class="mini">Tamanho</div>
+          <div id="pdpSizes" class="sizes"></div>
+        </div>
+
+        <div class="qty">
+          <div class="mini">Quantidade</div>
+          <button onclick="setQty(-1)">−</button>
+          <strong id="qtyVal">1</strong>
+          <button onclick="setQty(1)">+</button>
+        </div>
+
+        <div class="row" style="margin:10px 0 14px">
+          <button class="btn primary" id="addToCartBtn">Adicionar ao carrinho</button>
+          <button class="btn" id="viewOnBodyBtn">Ver no corpo</button>
+        </div>
+
+        <div class="ship">
+          <div class="row" style="margin-bottom:8px">
+            <div>
+              <div class="mini">Calcular frete por CEP</div>
+              <div class="mini">Entrega a partir de Pato Branco, PR</div>
+            </div>
+            <span class="tag">Estimativa</span>
+          </div>
+          <div class="row" style="gap:8px">
+            <input id="cepInput" placeholder="Digite seu CEP (8 dígitos)" maxlength="8" inputmode="numeric" />
+            <button class="btn" onclick="calcFrete()">Calcular</button>
+          </div>
+          <div id="freteResult" class="mini" style="margin-top:8px"></div>
+        </div>
+
+        <div class="recommendations">
+          <h3 style="margin:12px 0 8px; font-size:16px">Semelhantes ao seu gosto</h3>
+          <div id="recoRow" class="grid" style="grid-template-columns:repeat(3,1fr); gap:10px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    // ===============================
+    // Catálogo base
+    // ===============================
+    const BRL = new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL' });
+
+    const PRODUCTS = [
+      {
+        id:'desagua-masc',
+        title:'Camiseta "Você desagua em mim" (Masculina)',
+        gender:'masculino',
+        price:109.9,
+        tags:['camiseta','street','minimal','frase'],
+        sizes:['P','M','G','GG'],
+        // imagens fornecidas
+        images:[
+          {src:'https://image2url.com/images/1755726852204-9562385c-a9fc-4a77-9af2-42c071c141c7.png', kind:'produto'},
+          {src:'https://image2url.com/images/1755726986172-5bce9f00-7ae3-44d9-bd37-4f982954272c.png', kind:'produto'},
+          {src:'https://image2url.com/images/1755726309043-2905f7fa-7433-4e3e-b9dd-b2f5c7312fef.png', kind:'corpo'}
+        ],
+        createdAt: 20250801
+      },
+      {
+        id:'lanca-fem',
+        title:'Camiseta "Lança menina lança todo esse perfume" (Feminina)',
+        gender:'feminino',
+        price:119.9,
+        tags:['camiseta','pop','frase','feminina'],
+        sizes:['PP','P','M','G'],
+        images:[
+          {src:'https://image2url.com/images/1755727086816-0385e06a-ca94-4242-9251-bca27d9ecd4e.png', kind:'produto'},
+          {src:'https://image2url.com/images/1755727051333-bcc40cb8-0fb7-4208-9e2d-3a5f4ceddbbb.png', kind:'corpo'},
+          {src:'https://image2url.com/images/1755727136548-25cd8fd0-5217-4f9b-ad7f-1015fff3e69a.png', kind:'corpo'}
+        ],
+        createdAt: 20250805
+      },
+      // Itens de preenchimento com imagens aleatórias fornecidas
+      {
+        id:'essencial-preta',
+        title:'Camiseta Essencial Preta',
+        gender:'unissex',
+        price:79.9,
+        tags:['camiseta','básico','minimal','unissex','promo'],
+        sizes:['P','M','G','GG'],
+        images:[
+          {src:'https://tse2.mm.bing.net/th/id/OIP.53t_TnGkAe5RKovWrpyV5AHaEK?pid=Api&P=0&h=180', kind:'produto'}
+        ],
+        createdAt: 20250720
+      },
+      {
+        id:'jaqueta-street',
+        title:'Jaqueta Street Night',
+        gender:'unissex',
+        price:299.9,
+        tags:['jaqueta','street','inverno','premium'],
+        sizes:['P','M','G'],
+        images:[
+          {src:'https://tse3.mm.bing.net/th/id/OIP.GYFhUzxTZr3PUjDkW2sUkAHaEK?pid=Api&P=0&h=180', kind:'produto'}
+        ],
+        createdAt: 20250728
+      },
+      {
+        id:'camiseta-azul',
+        title:'Camiseta Azul Horizon',
+        gender:'masculino',
+        price:89.9,
+        tags:['camiseta','casual','verão'],
+        sizes:['P','M','G','GG'],
+        images:[
+          {src:'https://tse1.mm.bing.net/th/id/OIP.XjizHjt7OuSOb0xV0tO3aQAAAA?pid=Api&P=0&h=180', kind:'produto'}
+        ],
+        createdAt: 20250718
+      },
+      {
+        id:'moletom-urban',
+        title:'Moletom Urban Comfort',
+        gender:'unissex',
+        price:199.9,
+        tags:['moletom','inverno','conforto'],
+        sizes:['P','M','G','GG'],
+        images:[
+          {src:'https://tse3.mm.bing.net/th/id/OIP.EC-rIY6qDQAFv3LqWdwgZgHaHa?pid=Api&P=0&h=180', kind:'produto'}
+        ],
+        createdAt: 20250709
+      }
+    ];
+
+    // ===============================
+    // Estado e persistência
+    // ===============================
+    const state = {
+      filter:'all',
+      sort:'relevance',
+      query:'',
+      favorites: new Set(JSON.parse(localStorage.getItem('VU:favs') || '[]')),
+      cart: JSON.parse(localStorage.getItem('VU:cart') || '[]'), // [{id,size,qty,ship?}]
+      recentLikes: JSON.parse(localStorage.getItem('VU:likes') || '[]'), // ids
+      currentProduct: null,
+      selectedSize: null,
+      qty:1
+    };
+
+    const q = (sel, ctx=document)=>ctx.querySelector(sel);
+    const qa = (sel, ctx=document)=>Array.from(ctx.querySelectorAll(sel));
+
+    function saveFavs(){
+      localStorage.setItem('VU:favs', JSON.stringify([...state.favorites]));
+    }
+    function saveCart(){
+      localStorage.setItem('VU:cart', JSON.stringify(state.cart));
+      updateCartCount();
+    }
+    function saveLikes(){
+      localStorage.setItem('VU:likes', JSON.stringify(state.recentLikes.slice(-15)));
+    }
+
+    // ===============================
+    // UI: Grid e cartões
+    // ===============================
+    const grid = q('#grid');
+    const resultCount = q('#resultCount');
+
+    function renderGrid(){
+      grid.setAttribute('aria-busy','true');
+      const items = filteredAndSorted();
+      resultCount.textContent = items.length;
+      grid.innerHTML = '';
+      for(const p of items){
+        grid.appendChild(cardEl(p));
+      }
+      grid.setAttribute('aria-busy','false');
+    }
+
+    function filteredAndSorted(){
+      let items = PRODUCTS.filter(p=>{
+        // filtro por chip
+        if(state.filter !== 'all'){
+          if(['masculino','feminino','unissex'].includes(state.filter)){
+            if(p.gender !== state.filter) return false;
+          } else if(!p.tags.includes(state.filter)) return false;
+        }
+        // busca
+        if(state.query){
+          const t = (p.title+' '+p.tags.join(' ')).toLowerCase();
+          const ok = state.query.toLowerCase().split(/\s+/).every(k=>t.includes(k));
+          if(!ok) return false;
+        }
+        return true;
+      });
+
+      // ordenação
+      if(state.sort === 'price-asc') items.sort((a,b)=>a.price-b.price);
+      else if(state.sort === 'price-desc') items.sort((a,b)=>b.price-a.price);
+      else if(state.sort === 'newest') items.sort((a,b)=>b.createdAt-a.createdAt);
+      else {
+        // relevância simples: favoritos e likes elevam score, depois novidades
+        const favBoost = (p)=> state.favorites.has(p.id) ? 20 : 0;
+        const likeBoost = (p)=> state.recentLikes.includes(p.id) ? 10 : 0;
+        items.sort((a,b)=> (b.createdAt + favBoost(b) + likeBoost(b)) - (a.createdAt + favBoost(a) + likeBoost(a)));
+      }
+      return items;
+    }
+
+    function cardEl(p){
+      const el = document.createElement('article');
+      el.className = 'card';
+      el.innerHTML = `
+        <button class="fav" aria-label="Favoritar">
+          ${heartSVG(state.favorites.has(p.id))}
+        </button>
+        <div class="card-media">
+          <img loading="lazy" alt="${p.title}" src="${p.images[0].src}"/>
+        </div>
+        <div class="card-body">
+          <h3 class="title">${p.title}</h3>
+          <div class="row">
+            <span class="muted">${p.gender[0].toUpperCase()+p.gender.slice(1)} • ${p.tags.slice(0,2).join(' / ')}</span>
+            <span class="price">${BRL.format(p.price)}</span>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <button class="btn" data-act="quick">Ver detalhes</button>
+            <button class="btn primary" data-act="add">Adicionar</button>
+          </div>
+        </div>
+      `;
+      const favBtn = q('.fav', el);
+      favBtn.onclick = (ev)=>{
+        ev.stopPropagation();
+        toggleFav(p.id);
+        favBtn.innerHTML = heartSVG(state.favorites.has(p.id));
+      };
+      // Quick view
+      q('[data-act="quick"]', el).onclick = ()=> openPDP(p.id);
+      // Add quick
+      q('[data-act="add"]', el).onclick = ()=>{
+        openPDP(p.id);
+        toast('Selecione o tamanho para adicionar ao carrinho.');
+      };
+      // Clique na imagem abre modal
+      q('.card-media', el).onclick = ()=> openPDP(p.id);
+      return el;
+    }
+
+    function heartSVG(filled){
+      return `<svg class="heart ${filled?'filled':''}" viewBox="0 0 24 24">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 3.99 4 6.5 4c1.74 0 3.41.81 4.5 2.09A6 6 0 0 1 20 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+    }
+
+    // ===============================
+    // Filtros, busca, sort
+    // ===============================
+    qa('.chip').forEach(ch=>{
+      ch.addEventListener('click', ()=>{
+        qa('.chip').forEach(c=>c.classList.remove('active'));
+        ch.classList.add('active');
+        state.filter = ch.dataset.filter;
+        renderGrid();
+      });
+    });
+    q('#sortSelect').addEventListener('change', (e)=>{
+      state.sort = e.target.value;
+      renderGrid();
+    });
+    q('#searchInput').addEventListener('input', (e)=>{
+      state.query = e.target.value.trim();
+      renderGrid();
+    });
+    q('#ctaNovidades').onclick = ()=>{
+      state.sort='newest'; q('#sortSelect').value='newest'; renderGrid(); toast('Ordenado por novidades.');
+    };
+    q('#ctaOfertas').onclick = ()=>{
+      state.filter='promo'; qa('.chip').forEach(c=>c.classList.toggle('active', c.dataset.filter==='promo')); renderGrid();
+      toast('Mostrando promoções.');
+    };
+
+    // ===============================
+    // Favoritos
+    // ===============================
+    function toggleFav(id){
+      if(state.favorites.has(id)) state.favorites.delete(id); else state.favorites.add(id);
+      saveFavs(); updateFavCount(); renderFavs(); // atualização do drawer
+      if(!state.recentLikes.includes(id)) { state.recentLikes.push(id); saveLikes(); }
+      toast(state.favorites.has(id)?'Adicionado aos favoritos.':'Removido dos favoritos.');
+    }
+    function updateFavCount(){ q('#favCount').textContent = state.favorites.size }
+    function renderFavs(){
+      const box = q('#favContent');
+      const items = PRODUCTS.filter(p=>state.favorites.has(p.id));
+      if(items.length===0){ box.innerHTML = `<p class="mini">Nada por aqui ainda. Explore e clique no coração para favoritar.</p>`; return; }
+      box.innerHTML = '';
+      for(const p of items){
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;gap:10px;align-items:center;border:1px solid var(--line);padding:10px;border-radius:12px;margin-bottom:8px;background:#121525';
+        row.innerHTML = `
+          <img src="${p.images[0].src}" alt="${p.title}" style="width:64px;height:64px;object-fit:cover;border-radius:10px;border:1px solid var(--line)"/>
+          <div style="flex:1">
+            <div style="font-weight:700">${p.title}</div>
+            <div class="mini">${p.gender} • ${p.tags.slice(0,3).join(' / ')}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-weight:800">${BRL.format(p.price)}</div>
+            <div class="row" style="margin-top:6px">
+              <button class="btn" data-id="${p.id}" data-act="ver">Ver</button>
+              <button class="btn" data-id="${p.id}" data-act="rem">Remover</button>
+            </div>
+          </div>
+        `;
+        box.appendChild(row);
+        q('[data-act="ver"]', row).onclick = ()=> openPDP(p.id);
+        q('[data-act="rem"]', row).onclick = ()=> { toggleFav(p.id); };
+      }
+    }
+    function toggleFavs(open){ q('#favDrawer').classList.toggle('open', open ?? !q('#favDrawer').classList.contains('open')); }
+    q('#openFavs').onclick = ()=> toggleFavs(true);
+
+    // ===============================
+    // Carrinho
+    // ===============================
+    function addToCart(productId, size, qty=1){
+      if(!size){ toast('Selecione um tamanho.'); return; }
+      const item = state.cart.find(i=>i.id===productId && i.size===size);
+      if(item) item.qty += qty;
+      else state.cart.push({ id:productId, size, qty, ship:null });
+      saveCart();
+      renderCart();
+      toast('Adicionado ao carrinho.');
+    }
+    function removeFromCart(productId, size){
+      state.cart = state.cart.filter(i=> !(i.id===productId && i.size===size));
+      saveCart(); renderCart();
+    }
+    function updateCartCount(){
+      const total = state.cart.reduce((s,i)=>s+i.qty,0);
+      q('#cartCount').textContent = total;
+    }
+    function cartTotals(){
+      const subtotal = state.cart.reduce((s,i)=> s + (PRODUCTS.find(p=>p.id===i.id)?.price||0)*i.qty, 0);
+      const ship = state.cart.reduce((s,i)=> s + (i.ship?.value||0), 0);
+      return { subtotal, ship, total: subtotal+ship };
+    }
+    function renderCart(){
+      const box = q('#cartContent');
+      if(state.cart.length===0){ box.innerHTML = '<p class="mini">Seu carrinho está vazio.</p>'; q('#subtotal').textContent=BRL.format(0); q('#shipCost').textContent='—'; q('#total').textContent=BRL.format(0); return; }
+      box.innerHTML = '';
+      for(const i of state.cart){
+        const p = PRODUCTS.find(p=>p.id===i.id);
+        const row = document.createElement('div');
+        row.style.cssText = 'display:grid;grid-template-columns:64px 1fr auto;gap:10px;border:1px solid var(--line);padding:10px;border-radius:12px;margin-bottom:8px;background:#121525';
+        row.innerHTML = `
+          <img src="${p.images[0].src}" alt="${p.title}" style="width:64px;height:64px;object-fit:cover;border-radius:10px;border:1px solid var(--line)"/>
+          <div>
+            <div style="display:flex;justify-content:space-between;gap:8px">
+              <div style="font-weight:700">${p.title}</div>
+              <div>${BRL.format(p.price)}</div>
+            </div>
+            <div class="mini">Tam: ${i.size} • ${p.gender}</div>
+            <div class="row" style="margin-top:6px">
+              <div class="qty">
+                <button data-act="dec">−</button>
+                <strong>${i.qty}</strong>
+                <button data-act="inc">+</button>
+              </div>
+              <button class="btn" data-act="rem">Remover</button>
+            </div>
+            <div class="mini" style="margin-top:6px">${i.ship? `Frete: ${i.ship.label} ${BRL.format(i.ship.value)} (${i.ship.days} dias)` : 'Frete: calcule no produto'}</div>
+          </div>
+          <div style="text-align:right;font-weight:800">${BRL.format(p.price*i.qty)}</div>
+        `;
+        box.appendChild(row);
+        q('[data-act="rem"]', row).onclick = ()=> removeFromCart(i.id,i.size);
+        q('[data-act="dec"]', row).onclick = ()=> { if(i.qty>1){ i.qty--; saveCart(); renderCart(); } };
+        q('[data-act="inc"]', row).onclick = ()=> { i.qty++; saveCart(); renderCart(); };
+      }
+      const totals = cartTotals();
+      q('#subtotal').textContent = BRL.format(totals.subtotal);
+      q('#shipCost').textContent = totals.ship>0 ? BRL.format(totals.ship) : '—';
+      q('#total').textContent = BRL.format(totals.total);
+    }
+    function toggleCart(open){ q('#cartDrawer').classList.toggle('open', open ?? !q('#cartDrawer').classList.contains('open')); }
+    q('#openCart').onclick = ()=> { toggleCart(true); renderCart(); }
+
+    // ===============================
+    // PDP modal
+    // ===============================
+    function openPDP(id){
+      const p = PRODUCTS.find(p=>p.id===id);
+      state.currentProduct = p;
+      state.selectedSize = null;
+      state.qty = 1;
+      // header
+      q('#pdpTitle').textContent = p.title;
+      q('#pdpTags').textContent = `${capitalize(p.gender)} • ${p.tags.join(' / ')}`;
+      q('#pdpPrice').textContent = BRL.format(p.price);
+      q('#qtyVal').textContent = '1';
+      // favorito
+      q('#pdpFavText').textContent = state.favorites.has(p.id)? 'Nos seus favoritos' : 'Favoritar';
+      // sizes
+      const sizesBox = q('#pdpSizes'); sizesBox.innerHTML = '';
+      p.sizes.forEach(s=>{
+        const b = document.createElement('button');
+        b.className = 'size'; b.textContent = s;
+        b.onclick = ()=>{ qa('.size', sizesBox).forEach(x=>x.classList.remove('active')); b.classList.add('active'); state.selectedSize=s; };
+        sizesBox.appendChild(b);
+      });
+      // galeria
+      renderGallery(p.images);
+      // ações
+      q('#addToCartBtn').onclick = ()=> addToCart(p.id, state.selectedSize, state.qty);
+      q('#pdpFav').onclick = ()=>{ toggleFav(p.id); q('#pdpFavText').textContent = state.favorites.has(p.id)? 'Nos seus favoritos' : 'Favoritar'; };
+      q('#viewOnBodyBtn').onclick = ()=>{
+        // se houver imagem "corpo", abre a primeira em nova aba; senão, abre a primeira imagem
+        const onBody = p.images.find(i=>i.kind==='corpo') || p.images[0];
+        window.open(onBody.src, '_blank');
+      };
+      // recomendações
+      renderRecommendations(p.id);
+      // frete UI reset
+      q('#cepInput').value=''; q('#freteResult').textContent='';
+      togglePDP(true);
+    }
+    function togglePDP(open){ q('#pdpModal').classList.toggle('open', open ?? !q('#pdpModal').classList.contains('open')); }
+    function setQty(delta){
+      state.qty = Math.max(1, state.qty + delta);
+      q('#qtyVal').textContent = state.qty;
+    }
+
+    function renderGallery(images){
+      const main = q('#galleryMain'); const thumbs = q('#galleryThumbs');
+      main.innerHTML = ''; thumbs.innerHTML = '';
+      let idx = 0;
+      const show = (i)=>{
+        main.innerHTML = `<img alt="Imagem do produto" src="${images[i].src}" style="width:100%;height:100%;object-fit:contain;background:#0a0d14"/>`;
+        qa('.thumb', thumbs).forEach((t,k)=> t.classList.toggle('active', k===i));
+        idx = i;
+      };
+      images.forEach((img,i)=>{
+        const th = document.createElement('button'); th.className='thumb'; th.innerHTML = `<img alt="miniatura" src="${img.src}" style="width:100%;height:100%;object-fit:cover"/>`;
+        th.onclick = ()=> show(i);
+        thumbs.appendChild(th);
+      });
+      // clique na imagem principal abre em tamanho real
+      main.onclick = ()=> window.open(images[idx].src,'_blank');
+      show(0);
+    }
+
+    // ===============================
+    // Recomendações
+    // ===============================
+    function renderRecommendations(baseId){
+      const base = PRODUCTS.find(p=>p.id===baseId);
+      const likes = new Set(state.recentLikes);
+      const score = (p)=>{
+        if(p.id===base.id) return -Infinity;
+        let s = 0;
+        // tags em comum
+        p.tags.forEach(t=> { if(base.tags.includes(t)) s += 5; });
+        // mesmo gênero
+        if(p.gender===base.gender) s += 3;
+        // histórico do usuário
+        if(likes.has(p.id)) s += 4;
+        return s + (100000 - Math.abs(p.price - base.price)); // prox. de preço
+      };
+      const rec = PRODUCTS.slice().sort((a,b)=> score(b)-score(a)).filter(p=>p.id!==base.id).slice(0,3);
+      const row = q('#recoRow'); row.innerHTML = '';
+      for(const p of rec){
+        const el = document.createElement('div');
+        el.className='card';
+        el.innerHTML = `
+          <div class="card-media"><img src="${p.images[0].src}" alt="${p.title}" loading="lazy"/></div>
+          <div class="card-body">
+            <div class="title">${p.title}</div>
+            <div class="row"><span class="muted">${p.tags.slice(0,2).join(' / ')}</span><span class="price">${BRL.format(p.price)}</span></div>
+            <div class="row" style="margin-top:8px"><button class="btn" data-id="${p.id}">Ver</button></div>
+          </div>`;
+        q('#recoRow').appendChild(el);
+        q('[data-id]', el).onclick = ()=> openPDP(p.id);
+      }
+    }
+
+    // ===============================
+    // Frete por CEP (estimativa)
+    // ===============================
+    // Origem PR: prefixo aproximado 85 (Pato Branco/PR). Fórmula simples por distância de prefixo.
+    function calcFrete(){
+      const cep = q('#cepInput').value.trim().replace(/\D/g,'');
+      if(cep.length!==8){ toast('CEP inválido. Digite 8 números.'); return; }
+      const dest = parseInt(cep.slice(0,2),10);
+      const origin = 85;
+      const distance = Math.min(40, Math.abs(dest - origin));
+      const subtotal = cartTotals().subtotal;
+      const pac = { label:'PAC', value: Math.max(0, +(9.9 + 0.35*distance).toFixed(2)), days: 3 + Math.ceil(distance/6) };
+      const sedex = { label:'SEDEX', value: +(14.9 + 0.55*distance).toFixed(2), days: 1 + Math.ceil(distance/10) };
+      // frete grátis em PAC para pedidos 299+
+      if(subtotal >= 299) pac.value = 0;
+      const res = q('#freteResult');
+      res.innerHTML = `
+        Melhor opção: <strong>${pac.value===0?'PAC Grátis':`${pac.label} ${BRL.format(pac.value)}`}</strong> (${pac.days} dias).
+        Alternativa: <strong>${sedex.label} ${BRL.format(sedex.value)}</strong> (${sedex.days} dias).
+      `;
+      // atribui opção ao(s) item(ns) do mesmo produto no carrinho, se existir
+      const pid = state.currentProduct?.id;
+      state.cart.filter(i=>i.id===pid).forEach(i=> i.ship = pac.value===0 ? {...pac, label:'PAC (Grátis)'} : sedex);
+      saveCart(); renderCart();
+      toast('Frete estimado adicionado ao carrinho.');
+    }
+
+    // ===============================
+    // Utilitários e inicialização
+    // ===============================
+    function toast(msg){
+      const el = q('#toast'); el.textContent = msg; el.classList.add('show');
+      clearTimeout(toast._t); toast._t = setTimeout(()=> el.classList.remove('show'), 2200);
+    }
+    function capitalize(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+    // Escutas globais
+    document.addEventListener('keydown', (e)=>{
+      if(e.key==='Escape'){ togglePDP(false); toggleCart(false); toggleFavs(false); }
+      if(e.ctrlKey && e.key.toLowerCase()==='k'){ e.preventDefault(); q('#searchInput').focus(); }
+    });
+
+    // Atalhos de clique fora para fechar drawers/modals
+    q('#pdpModal').addEventListener('click', (e)=> { if(e.target === q('#pdpModal')) togglePDP(false) });
+    q('#cartDrawer').addEventListener('click', (e)=> { if(e.target === q('#cartDrawer')) toggleCart(false) });
+    q('#favDrawer').addEventListener('click', (e)=> { if(e.target === q('#favDrawer')) toggleFavs(false) });
+
+    // Primeira renderização
+    updateFavCount();
+    updateCartCount();
+    renderFavs();
+    renderGrid();
+  </script>
+</body>
+</html>
+```
